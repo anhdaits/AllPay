@@ -8,6 +8,7 @@ export interface Invoice {
   recipient_wallet: string;
   customer_name: string;
   customer_email: string | null;
+  customer_wallet: string | null;
   amount_usdc: string | number; // PostgREST returns numeric columns as JS numbers, not strings
   description: string | null;
   due_date: string | null;
@@ -22,6 +23,7 @@ export interface NewInvoiceInput {
   recipient_wallet: string;
   customer_name: string;
   customer_email: string;
+  customer_wallet: string;
   amount_usdc: string;
   description: string;
   due_date: string; // yyyy-mm-dd

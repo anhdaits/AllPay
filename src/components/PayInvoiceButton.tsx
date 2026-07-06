@@ -6,6 +6,7 @@ import { parseUnits, isAddress } from "viem";
 import { arcTestnet } from "@/lib/chain";
 import { supabase } from "@/lib/supabase";
 import { Invoice } from "@/types/invoice";
+import { PaidStamp } from "./StatusBadge";
 
 function friendlyError(error: { message?: string; shortMessage?: string } | null): string | null {
   if (!error) return null;
@@ -64,22 +65,26 @@ export function PayInvoiceButton({ invoice }: { invoice: Invoice }) {
 
   if (invoice.status === "paid") {
     return (
-      <div className="rounded-card border border-signal/30 bg-signal/10 p-4 text-sm text-signal">
-        This invoice has been paid.
-        {invoice.tx_hash && (
-          <ExplorerLink hash={invoice.tx_hash} />
-        )}
+      <div className="flex items-center justify-between gap-3 rounded-card border border-paid/30 bg-paid/10 p-4">
+        <div className="text-sm text-paid">
+          This invoice has been paid.
+          {invoice.tx_hash && <ExplorerLink hash={invoice.tx_hash} />}
+        </div>
+        <PaidStamp />
       </div>
     );
   }
 
   if (isConfirmed && hash) {
     return (
-      <div className="rounded-card border border-signal/30 bg-signal/10 p-4 text-sm text-signal">
-        Payment confirmed{marking ? " — saving receipt…" : "."}
+      <div className="rounded-card border border-paid/30 bg-paid/10 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-paid">Payment confirmed{marking ? " — saving receipt…" : "."}</p>
+          <PaidStamp />
+        </div>
         <ExplorerLink hash={hash} />
         {markError && (
-          <p className="mt-2 text-xs text-amber">
+          <p className="mt-2 text-xs text-brass">
             Payment succeeded on-chain, but saving the receipt failed: {markError}. The tx hash
             above is your proof of payment regardless.
           </p>
@@ -102,7 +107,7 @@ export function PayInvoiceButton({ invoice }: { invoice: Invoice }) {
       <button
         onClick={() => switchChain({ chainId: arcTestnet.id })}
         disabled={isSwitching}
-        className="w-full rounded-lg bg-amber py-3 text-sm font-semibold text-ink-950 transition hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-lg bg-brass py-3 text-sm font-semibold text-ink-950 transition hover:bg-brass-bright disabled:opacity-50"
       >
         {isSwitching ? "Switching…" : "Switch to Arc Testnet to pay"}
       </button>
@@ -131,9 +136,13 @@ export function PayInvoiceButton({ invoice }: { invoice: Invoice }) {
           })
         }
         disabled={busy}
-        className="w-full rounded-lg bg-signal py-3 text-sm font-semibold text-ink-950 transition hover:bg-signal-bright disabled:opacity-50"
+        className="w-full rounded-lg bg-brass py-3 text-sm font-semibold text-ink-950 transition hover:bg-brass-bright disabled:opacity-50"
       >
-        {isSending ? "Confirm in wallet…" : isConfirming ? "Waiting for confirmation…" : `Pay ${invoice.amount_usdc} USDC`}
+        {isSending
+          ? "Confirm in wallet…"
+          : isConfirming
+          ? "Waiting for confirmation…"
+          : `Pay ${invoice.amount_usdc} USDC`}
       </button>
       {sendError && (
         <p className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
@@ -147,14 +156,14 @@ export function PayInvoiceButton({ invoice }: { invoice: Invoice }) {
 function ExplorerLink({ hash }: { hash: string }) {
   const explorerUrl = process.env.NEXT_PUBLIC_ARC_EXPLORER_URL;
   if (!explorerUrl) {
-    return <p className="mt-1 font-mono text-xs text-signal/80 break-all">{hash}</p>;
+    return <p className="mt-1 font-mono text-xs text-ink-400 break-all">{hash}</p>;
   }
   return (
     <a
       href={`${explorerUrl}/tx/${hash}`}
       target="_blank"
       rel="noreferrer"
-      className="mt-1 block font-mono text-xs text-signal underline decoration-signal/40 underline-offset-2 break-all"
+      className="mt-1 block font-mono text-xs text-brass underline decoration-brass/40 underline-offset-2 break-all"
     >
       View transaction on Arc Explorer ↗
     </a>

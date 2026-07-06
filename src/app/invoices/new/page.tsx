@@ -5,30 +5,25 @@ import { InvoiceForm } from "@/components/InvoiceForm";
 
 export default function NewInvoicePage() {
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
-      <header className="mb-8 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <Logo />
-          <nav className="hidden items-center gap-5 sm:flex">
-            <Link href="/dashboard" className="text-sm text-ink-200 transition hover:text-ink-50">
-              Dashboard
-            </Link>
-            <span className="text-sm font-medium text-ink-50">New Invoice</span>
-          </nav>
-        </div>
-        <ConnectButton />
-      </header>
+    <main className="min-h-screen bg-[#f7fbf8] text-[#0b3b2a]" style={{ colorScheme: "light" }}>
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle,#dbe8df_1px,transparent_1.2px)] [background-size:7px_7px] opacity-50" />
 
-      <section className="rounded-card border border-ink-700 bg-ink-800/40 p-5 sm:p-7">
-        <h1 className="font-display text-xl font-semibold text-ink-50">New invoice</h1>
-        <p className="mt-1 text-sm text-ink-400">
-          Fill this in, share the link it generates, and get paid in USDC directly to your wallet
-          on Arc Testnet.
-        </p>
-        <div className="mt-6">
-          <InvoiceForm />
-        </div>
-      </section>
+      <div className="relative mx-auto max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+        <header className="mb-6 flex items-center justify-between gap-4 rounded-[24px] border border-[#dfe8e3] bg-white/80 px-5 py-4 shadow-sm backdrop-blur">
+          <div className="flex items-center gap-6">
+            <Logo variant="light" />
+            <nav className="hidden items-center gap-5 sm:flex">
+              <Link href="/dashboard" className="text-sm font-semibold text-[#6d7b75] transition hover:text-[#0b3b2a]">
+                Dashboard
+              </Link>
+              <span className="text-sm font-black text-[#0b3b2a]">Create Invoice</span>
+            </nav>
+          </div>
+          <ConnectButton variant="light" />
+        </header>
+
+        <InvoiceForm />
+      </div>
     </main>
   );
 }

@@ -8,31 +8,40 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Deep navy ledger scale — never pure black, carries a cool blue undertone.
         ink: {
-          950: "#0B0F14",
-          900: "#11161D",
-          800: "#1A212B",
-          700: "#252E3A",
-          600: "#3A4553",
-          400: "#7A8896",
-          200: "#C6CFD8",
-          100: "#E7EBEF",
-          50: "#F5F7F9",
+          950: "#0A0E16",
+          900: "#10151F",
+          850: "#141B28",
+          800: "#171E2B",
+          700: "#232C3D",
+          600: "#384254",
+          400: "#8993A6",
+          200: "#C7CEDA",
+          100: "#DDE2EA",
+          50: "#F5F7FA",
         },
-        signal: {
-          DEFAULT: "#2FE0C0",
-          dim: "#1CA98D",
-          bright: "#5CFCE0",
+        // Brand accent — the one warm color in the system. Reserved for
+        // actions (buttons, links, focus) and the ink-stamp signature.
+        // Never used for status; status has its own palette below.
+        brass: {
+          DEFAULT: "#E3A345",
+          bright: "#F0BE6C",
+          dim: "#B97F2E",
         },
-        amber: {
-          DEFAULT: "#F2A94E",
+        // Functional status colors. Each means exactly one thing, everywhere.
+        paid: {
+          DEFAULT: "#3FBF8F",
+        },
+        pending: {
+          DEFAULT: "#5B8DEF",
         },
         danger: {
-          DEFAULT: "#F0665C",
+          DEFAULT: "#E2665C",
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "ui-sans-serif", "system-ui"],
+        display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular"],
       },

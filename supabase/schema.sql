@@ -15,6 +15,7 @@ create table if not exists public.invoices (
   recipient_wallet text not null,          -- wallet that should RECEIVE the payment
   customer_name text not null,
   customer_email text,
+  customer_wallet text,
 
   -- invoice details
   amount_usdc numeric(20, 6) not null check (amount_usdc > 0),

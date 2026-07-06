@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Invoice } from "@/types/invoice";
+import { Logo } from "@/components/Logo";
 import { ConnectButton } from "@/components/ConnectButton";
 import { PayInvoiceButton } from "@/components/PayInvoiceButton";
-import { formatUsdc, truncateAddress, formatDueDate, isOverdue } from "@/lib/format";
+import { StatusBadge } from "@/components/StatusBadge";
+import { formatUsdc, truncateAddress, formatDueDate } from "@/lib/format";
 
 export function InvoiceView({ id }: { id: string }) {
   const [invoice, setInvoice] = useState<Invoice | null | undefined>(undefined);
@@ -42,7 +44,7 @@ export function InvoiceView({ id }: { id: string }) {
         <p className="mt-2 text-sm text-ink-400">{fetchError}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 rounded-lg border border-ink-700 px-4 py-2 text-sm text-ink-100 transition hover:border-signal/50"
+          className="mt-4 rounded-lg border border-ink-700 px-4 py-2 text-sm text-ink-100 transition hover:border-brass/50"
         >
           Try again
         </button>
@@ -77,21 +79,17 @@ export function InvoiceView({ id }: { id: string }) {
         <p className="mt-2 text-sm text-ink-400">
           This invoice doesn't exist, or the link is incorrect.
         </p>
-        <Link href="/" className="mt-4 inline-block text-sm text-signal underline underline-offset-2">
+        <Link href="/" className="mt-4 inline-block text-sm text-brass underline underline-offset-2">
           Back to AllPay
         </Link>
       </main>
     );
   }
 
-  const overdue = isOverdue(invoice.due_date, invoice.status);
-
   return (
     <main className="mx-auto max-w-lg px-4 py-10 sm:py-16">
       <header className="mb-8 flex items-center justify-between gap-4">
-        <Link href="/" className="text-xs font-medium uppercase tracking-widest text-signal">
-          AllPay
-        </Link>
+        <Logo />
         <ConnectButton />
       </header>
 
@@ -103,7 +101,7 @@ export function InvoiceView({ id }: { id: string }) {
               {invoice.customer_name}
             </p>
           </div>
-          <StatusBadge status={invoice.status} overdue={overdue} />
+          <StatusBadge invoice={invoice} />
         </div>
 
         <div className="my-6 h-px bg-ink-700" />
@@ -130,21 +128,6 @@ export function InvoiceView({ id }: { id: string }) {
         Invoice ID: <span className="font-mono">{invoice.id}</span>
       </p>
     </main>
-  );
-}
-
-function StatusBadge({ status, overdue }: { status: string; overdue: boolean }) {
-  const label = overdue ? "Overdue" : status[0].toUpperCase() + status.slice(1);
-  const styles =
-    status === "paid"
-      ? "bg-signal/15 text-signal"
-      : overdue
-      ? "bg-danger/15 text-danger"
-      : "bg-amber/15 text-amber";
-  return (
-    <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${styles}`}>
-      {label}
-    </span>
   );
 }
 
