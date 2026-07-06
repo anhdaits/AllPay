@@ -28,7 +28,11 @@ export function ConnectButton({ variant = "dark" }: { variant?: "dark" | "light"
           <button
             onClick={() => switchChain({ chainId: arcTestnet.id })}
             disabled={isSwitching}
-            className="rounded-full bg-brass/15 px-3 py-1.5 text-xs font-medium text-brass transition hover:bg-brass/25 disabled:opacity-50"
+            className={
+              variant === "light"
+                ? "rounded-full bg-brass/15 px-3 py-1.5 text-xs font-bold text-brass transition hover:bg-brass/25 disabled:opacity-50"
+                : "rounded-full bg-brass/15 px-3 py-1.5 text-xs font-medium text-brass transition hover:bg-brass/25 disabled:opacity-50"
+            }
           >
             {isSwitching ? "Switching…" : "Switch to Arc Testnet"}
           </button>

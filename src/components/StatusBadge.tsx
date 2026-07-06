@@ -7,7 +7,7 @@ const STYLES: Record<Display, string> = {
   paid: "bg-paid/15 text-paid",
   pending: "bg-pending/15 text-pending",
   overdue: "bg-danger/15 text-danger",
-  void: "bg-ink-700 text-ink-400",
+  void: "bg-[#eef3f0] text-[#6d7b75]",
 };
 
 const LABELS: Record<Display, string> = {

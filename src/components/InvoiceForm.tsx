@@ -103,10 +103,6 @@ export function InvoiceForm() {
       errors.customerWallet = "Not a valid wallet address (expected 0x… format).";
     }
 
-    if (customerWallet.trim() && !isAddress(customerWallet.trim())) {
-      errors.customerWallet = "Not a valid wallet address (expected 0x… format).";
-    }
-
     if (!itemName.trim()) errors.itemName = "Enter an item name.";
 
     if (!quantity.trim()) {
