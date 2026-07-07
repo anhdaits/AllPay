@@ -8,9 +8,13 @@ import {
   Globe2,
   Linkedin,
   MessageCircle,
+  Plus,
   ReceiptText,
+  Scale,
   Sparkles,
   Twitter,
+  Unlock,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
@@ -76,6 +80,47 @@ const steps = [
     description: "Share the invoice link and track settlement from the dashboard.",
   },
 ];
+
+const businessProfiles = [
+  {
+    label: "Small business",
+    description: "Local shops and independent sellers billing customers directly.",
+    image: "/business-small-business.png",
+  },
+  {
+    label: "Borderless company",
+    description: "Distributed teams invoicing clients and contractors worldwide.",
+    image: "/business-borderless-company.png",
+  },
+];
+
+const stablecoinBenefits = [
+  {
+    icon: Zap,
+    title: "Instant, Low-Cost Global Payments",
+    description:
+      "Send and receive payments worldwide in seconds—not days. AllPay reduces unnecessary friction in settlement and helps users move money faster with better transparency.",
+  },
+  {
+    icon: Scale,
+    title: "Value Stability in Volatile Markets",
+    description:
+      "Stablecoin payments reduce volatility risk by using USD-based digital dollars, making invoicing and payment collection more predictable.",
+  },
+  {
+    icon: Unlock,
+    title: "Accessibility for the Unbanked and Underbanked",
+    description:
+      "Anyone with internet access can participate. AllPay helps expand access to digital payments without relying on traditional banking infrastructure.",
+  },
+  {
+    icon: Sparkles,
+    title: "Internet-Native Money for the Future",
+    description:
+      "Built for modern online business, stablecoin rails enable programmable payments, global reach, and better interoperability for digital commerce.",
+  },
+];
+
 
 export default function OpeningPage() {
   return (
@@ -191,6 +236,32 @@ export default function OpeningPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {steps.map((step) => (
               <StepCard key={step.label} {...step} />
+            ))}
+          </div>
+        </section>
+
+        <section className="pb-16 sm:pb-20">
+          <h2 className="max-w-2xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-[#0b3b2a] sm:text-5xl">
+            Built for every business,
+            <br />
+            <span className="italic text-[#123f2d]">everywhere</span>
+          </h2>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {businessProfiles.map((profile) => (
+              <BusinessCard key={profile.label} {...profile} />
+            ))}
+          </div>
+        </section>
+
+        <section className="pb-20 sm:pb-24">
+          <h2 className="text-center font-display text-4xl font-bold tracking-[-0.04em] text-[#0b3b2a] sm:text-5xl">
+            Why Stablecoin
+          </h2>
+
+          <div className="mx-auto mt-12 grid max-w-4xl gap-x-10 gap-y-10 sm:grid-cols-2">
+            {stablecoinBenefits.map((benefit) => (
+              <StablecoinBenefit key={benefit.title} {...benefit} />
             ))}
           </div>
         </section>
@@ -367,5 +438,61 @@ function SocialLink({
       </span>
       <ArrowRight size={16} strokeWidth={2.5} className="text-[#8aa098] transition group-hover:translate-x-0.5 group-hover:text-[#0b8b4d]" />
     </a>
+  );
+}
+
+function BusinessCard({
+  label,
+  description,
+  image,
+}: {
+  label: string;
+  description: string;
+  image: string;
+}) {
+  return (
+    <div className="group relative aspect-[4/5] overflow-hidden rounded-[28px] border border-[#dfe8e3] shadow-[0_20px_70px_rgba(10,47,31,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_90px_rgba(10,47,31,0.18)] sm:aspect-[3/4]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={image}
+        alt={label}
+        className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 sm:p-6">
+        <div>
+          <p className="font-display text-xl font-bold text-white sm:text-2xl">{label}</p>
+          <p className="mt-1 max-w-[16rem] text-xs font-medium leading-relaxed text-white/70 sm:text-sm">
+            {description}
+          </p>
+        </div>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#15e47a] text-[#062416] shadow-[0_10px_24px_rgba(21,228,122,0.35)] transition group-hover:bg-[#26f58b]">
+          <Plus size={18} strokeWidth={2.5} />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function StablecoinBenefit({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex items-start gap-5">
+      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#f0f6f2] text-[#0b8b4d] shadow-[0_10px_28px_rgba(10,47,31,0.06)]">
+        <Icon size={24} strokeWidth={2} />
+      </span>
+      <div>
+        <h3 className="font-display text-lg font-bold tracking-[-0.02em] text-[#0b3b2a]">{title}</h3>
+        <p className="mt-1.5 text-sm font-medium leading-relaxed text-[#6d7b75]">{description}</p>
+      </div>
+    </div>
   );
 }

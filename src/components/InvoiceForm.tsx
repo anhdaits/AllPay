@@ -500,7 +500,8 @@ function InvoiceCreatedPanel({
 }) {
   const [copied, setCopied] = useState(false);
   const path = `/invoice/${invoiceId}`;
-  const fullUrl = typeof window !== "undefined" ? `${window.location.origin}${path}` : path;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const fullUrl = typeof window !== "undefined" ? `${window.location.origin}${path}` : `${appUrl}${path}`;
 
   async function copyLink() {
     try {
