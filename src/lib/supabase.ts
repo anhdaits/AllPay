@@ -3,20 +3,37 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-if (!supabaseUrl || !supabasePublishableKey) {
-  // Don't throw here. This module is imported by client components that
-  // Next.js may still render once on the server during `next build` (static
-  // generation), so a hard throw would fail the entire build in any
-  // environment where these vars aren't set yet — e.g. a fresh Vercel project
-  // before its environment variables are configured. Missing vars will
-  // instead surface as a clear Supabase error at the point of use, which the
-  // UI already handles via its existing error banners.
+/**
+ * True only when both env vars are present AND don't still look like the
+ * placeholder values from .env.example. Callers should check this *before*
+ * making a Supabase request, so a misconfigured deployment fails with a
+ * clear message instead of a bare `TypeError: Failed to fetch` (which is
+ * what you get when the client is created with an empty/placeholder URL and
+ * the browser's fetch() can't resolve it — no useful info in that error by
+ * itself).
+ */
+export const isSupabaseConfigured =
+  !!supabaseUrl &&
+  !!supabasePublishableKey &&
+  !supabaseUrl.includes("YOUR_PROJECT_REF") &&
+  !supabasePublishableKey.includes("your-key-here");
+
+if (!isSupabaseConfigured) {
   console.error(
-    "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY. " +
-      "Copy .env.example to .env.local locally, or set them in your Vercel project's Environment Variables."
+    "[supabase] NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are missing " +
+      "or still set to .env.example's placeholder values.\n" +
+      "Locally: cp .env.example .env.local, fill in your real Supabase project values, then restart `npm run dev`.\n" +
+      "On Vercel: set them under Project Settings → Environment Variables, then trigger a new deploy — " +
+      "NEXT_PUBLIC_ vars are baked into the build, so adding them after a build won't take effect until you redeploy."
   );
 }
 
-export const supabase = createClient(supabaseUrl ?? "", supabasePublishableKey ?? "", {
-  auth: { persistSession: false },
-});
+// A syntactically valid (but unreachable) URL as a fallback so createClient()
+// doesn't throw during module load if env vars are missing — the guard above
+// (and the isSupabaseConfigured checks at each call site) is what actually
+// surfaces the problem clearly, before any network call is attempted.
+export const supabase = createClient(
+  supabaseUrl || "https://not-configured.supabase.co",
+  supabasePublishableKey || "not-configured",
+  { auth: { persistSession: false } }
+);

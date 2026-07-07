@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import { useAccount } from "wagmi";
 import { isAddress } from "viem";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { truncateAddress } from "@/lib/format";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -131,34 +131,59 @@ export function InvoiceForm() {
       return;
     }
 
+    if (!isSupabaseConfigured) {
+      console.error(
+        "[InvoiceForm] Blocked submit: Supabase is not configured (missing/placeholder env vars)."
+      );
+      setFormError(
+        "This app isn't fully configured yet — the database connection is missing. " +
+          "(Site owner: check NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.)"
+      );
+      return;
+    }
+
     const errors = validate();
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
     setSubmitting(true);
-    const { data, error: dbError } = await supabase
-      .from("invoices")
-      .insert({
-        creator_wallet: address,
-        recipient_wallet: recipientWallet.trim(),
-        customer_name: customerName.trim(),
-        customer_email: customerEmail.trim(),
-        customer_wallet: customerWallet.trim() || null,
-        amount_usdc: Number(totalAmount.toFixed(6)),
-        description: [itemName.trim(), note.trim()].filter(Boolean).join(" — ") || null,
-        due_date: dueDate || null,
-        status: "pending",
-      })
-      .select("id")
-      .single();
-    setSubmitting(false);
+    try {
+      const { data, error: dbError } = await supabase
+        .from("invoices")
+        .insert({
+          creator_wallet: address,
+          recipient_wallet: recipientWallet.trim(),
+          customer_name: customerName.trim(),
+          customer_email: customerEmail.trim(),
+          customer_wallet: customerWallet.trim() || null,
+          amount_usdc: Number(totalAmount.toFixed(6)),
+          description: [itemName.trim(), note.trim()].filter(Boolean).join(" — ") || null,
+          due_date: dueDate || null,
+          status: "pending",
+        })
+        .select("id")
+        .single();
 
-    if (dbError || !data) {
-      setFormError(dbError?.message ?? "Could not save the invoice. Try again.");
-      return;
+      if (dbError || !data) {
+        console.error("[InvoiceForm] Supabase insert error:", dbError);
+        setFormError(dbError?.message ?? "Could not save the invoice. Try again.");
+        return;
+      }
+
+      setCreatedInvoiceId(data.id);
+    } catch (err) {
+      // A thrown (not returned) error here means the request never got a
+      // response at all — bad Supabase URL, no network, CORS, DNS failure,
+      // etc. Without this catch, it surfaces as an unhandled
+      // "TypeError: Failed to fetch" instead of a usable message.
+      console.error("[InvoiceForm] Network error creating invoice:", err);
+      setFormError(
+        "Couldn't reach the database. Check your internet connection and try again. " +
+          "If this keeps happening, the site's Supabase configuration may be broken."
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    setCreatedInvoiceId(data.id);
   }
 
   function resetForm() {
