@@ -1,16 +1,21 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  CheckCircle2,
   ChevronRight,
   CircleDollarSign,
+  Clock,
+  Code2,
   FileText,
   Github,
   Globe2,
   Linkedin,
+  Lock,
   MessageCircle,
   Plus,
   ReceiptText,
   Scale,
+  ShieldCheck,
   Sparkles,
   Twitter,
   Unlock,
@@ -18,6 +23,32 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+
+const availableFeatures = [
+  "Invoice creation with multiple line items",
+  "Customer details and payment wallet capture",
+  "Live invoice preview before sending",
+];
+
+const inDevelopmentFeatures = [
+  "Wallet payment on Arc Testnet",
+  "USDC settlement verification",
+  "Real-time payment status updates",
+];
+
+const trustPoints = [
+  { icon: ShieldCheck, label: "Built on Arc Testnet" },
+  { icon: Lock, label: "Non-custodial payments" },
+  { icon: Unlock, label: "No private keys stored" },
+  { icon: Code2, label: "Open-source prototype" },
+];
+
+const footerLinks = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "GitHub", href: "https://github.com/anhdaits/AllPay" },
+  { label: "Feedback", href: "https://github.com/anhdaits/AllPay/issues" },
+];
 
 const socialLinks = [
   {
@@ -45,20 +76,20 @@ const socialLinks = [
 const products = [
   {
     title: "Invoicing",
-    status: "MVP live",
+    status: "Available",
     description: "Create invoices, preview totals, and share payment-ready links.",
     icon: ReceiptText,
   },
   {
     title: "Payment links",
-    status: "Building",
+    status: "Available",
     description: "Send a clean public invoice page to clients anywhere.",
     icon: FileText,
   },
   {
     title: "USDC settlement",
-    status: "Arc ready",
-    description: "Track stablecoin payment status directly inside the dashboard.",
+    status: "In development",
+    description: "Wallet payment and settlement verification on Arc Testnet — still being hardened.",
     icon: CircleDollarSign,
   },
 ];
@@ -97,9 +128,9 @@ const businessProfiles = [
 const stablecoinBenefits = [
   {
     icon: Zap,
-    title: "Instant, Low-Cost Global Payments",
+    title: "Fast, Low-Cost Global Payments",
     description:
-      "Send and receive payments worldwide in seconds—not days. AllPay reduces unnecessary friction in settlement and helps users move money faster with better transparency.",
+      "Send and receive payments worldwide with near real-time confirmation—not days. AllPay reduces unnecessary friction in settlement and helps users move money faster with better transparency.",
   },
   {
     icon: Scale,
@@ -156,7 +187,7 @@ export default function OpeningPage() {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/home"
+              href="/dashboard"
               className="inline-flex items-center gap-2 rounded-full bg-[#15e47a] px-4 py-2 text-sm font-extrabold text-[#062416] shadow-[0_14px_28px_rgba(21,228,122,0.22)] transition hover:-translate-y-0.5 hover:bg-[#26f58b]"
             >
               Launch App
@@ -183,7 +214,7 @@ export default function OpeningPage() {
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                href="/home"
+                href="/dashboard"
                 className="group inline-flex items-center gap-2 rounded-2xl bg-[#15e47a] px-6 py-3.5 text-sm font-extrabold text-[#062416] shadow-[0_18px_38px_rgba(21,228,122,0.24)] transition hover:-translate-y-0.5 hover:bg-[#26f58b]"
               >
                 Launch App
@@ -215,6 +246,47 @@ export default function OpeningPage() {
           </div>
         </section>
 
+        <section className="pb-16 sm:pb-20">
+          <div className="overflow-hidden rounded-[32px] border border-[#dfe8e3] bg-white shadow-[0_24px_80px_rgba(10,47,31,0.07)]">
+            <div className="grid gap-0 lg:grid-cols-2">
+              <div className="border-b border-[#e4ece7] p-6 sm:p-8 lg:border-b-0 lg:border-r">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0b8b4d]">Available now</p>
+                <ul className="mt-4 space-y-3">
+                  {availableFeatures.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm font-semibold text-[#0b3b2a]">
+                      <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-[#0b8b4d]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="p-6 sm:p-8">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#8a6d1f]">In development</p>
+                <ul className="mt-4 space-y-3">
+                  {inDevelopmentFeatures.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-sm font-semibold text-[#0b3b2a]">
+                      <Clock size={18} className="mt-0.5 shrink-0 text-[#b97f2e]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 border-t border-[#e4ece7] p-5 sm:grid-cols-4 sm:p-6">
+              {trustPoints.map((point) => (
+                <span
+                  key={point.label}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#d7e2dc] bg-[#f7faf8] px-3 py-2 text-[11px] font-bold text-[#3d4a44]"
+                >
+                  <point.icon size={14} className="shrink-0 text-[#0b8b4d]" />
+                  {point.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="how-it-works" className="grid gap-5 pb-16 sm:pb-20 lg:grid-cols-[0.82fr_1.18fr]">
           <div className="rounded-[32px] border border-[#dfe8e3] bg-white p-6 shadow-[0_24px_80px_rgba(10,47,31,0.07)] sm:p-8">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-brass">How it works</p>
@@ -222,10 +294,11 @@ export default function OpeningPage() {
               From invoice to payment in three steps.
             </h2>
             <p className="mt-4 text-sm font-semibold leading-relaxed text-[#6d7b75]">
-              The opening page keeps the product simple: launch app first, then move into the working homepage, dashboard, and invoice creation flow.
+              Connect your wallet, create an invoice with line items and a due date, then share the
+              payment link. Your dashboard tracks status the moment payment comes in.
             </p>
             <Link
-              href="/home"
+              href="/dashboard"
               className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-[#0b3b2a] px-5 py-3 text-sm font-extrabold text-white shadow-[0_16px_36px_rgba(11,59,42,0.18)] transition hover:-translate-y-0.5 hover:bg-[#10523b]"
             >
               Open AllPay
@@ -296,7 +369,7 @@ export default function OpeningPage() {
                       Built in public for Arc builders.
                     </h3>
                     <p className="mt-3 text-sm font-semibold leading-relaxed text-[#6d7b75]">
-                      AllPay is an early MVP focused on practical crypto payment workflows: invoices, links, status tracking, and USDC settlement.
+                      AllPay is a public prototype focused on practical crypto payment workflows: invoices, links, status tracking, and USDC settlement on Arc Testnet.
                     </p>
                   </div>
                   <Link
@@ -313,7 +386,7 @@ export default function OpeningPage() {
         </section>
       </div>
 
-      <footer className="relative border-t border-[#dfe8e3] bg-white/75 px-4 py-7 text-center text-xs font-semibold text-[#7a8b84] sm:px-6">
+      <footer className="relative border-t border-[#dfe8e3] bg-white/75 px-4 py-7 text-xs font-semibold text-[#7a8b84] sm:px-6">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 sm:flex-row">
           <span>AllPay — stablecoin invoicing for Arc. Built with Next.js, wagmi, and Supabase.</span>
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -323,6 +396,19 @@ export default function OpeningPage() {
               </a>
             ))}
           </div>
+        </div>
+        <div className="mx-auto mt-4 flex max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-[#e4ece7] pt-4 sm:justify-start">
+          {footerLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+              className="hover:text-[#0b3b2a]"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </footer>
     </main>
@@ -385,13 +471,20 @@ function ProductCard({
   description: string;
   icon: LucideIcon;
 }) {
+  const isAvailable = status === "Available";
   return (
     <div className="group rounded-[30px] border border-[#dfe8e3] bg-white p-6 shadow-[0_20px_70px_rgba(10,47,31,0.06)] transition hover:-translate-y-1 hover:shadow-[0_28px_90px_rgba(10,47,31,0.1)]">
       <div className="flex items-start justify-between gap-4">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brass/15 text-brass transition group-hover:bg-[#15e47a]/15 group-hover:text-[#0b8b4d]">
           <Icon size={23} strokeWidth={2.25} />
         </span>
-        <span className="rounded-full border border-[#d7e2dc] bg-[#f7faf8] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-[#6d7b75]">
+        <span
+          className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] ${
+            isAvailable
+              ? "border-[#bfe6cf] bg-[#eafbf1] text-[#0b8b4d]"
+              : "border-[#e3d6b3] bg-[#fbf6e7] text-[#8a6d1f]"
+          }`}
+        >
           {status}
         </span>
       </div>

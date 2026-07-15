@@ -1,37 +1,29 @@
-import { Invoice, InvoiceStatus } from "@/types/invoice";
-import { isOverdue } from "@/lib/format";
+import { Invoice, DisplayStatus } from "@/types/invoice";
+import { getDisplayStatus, STATUS_LABELS } from "@/lib/format";
 
-type Display = "paid" | "pending" | "overdue" | "void";
-
-const STYLES: Record<Display, string> = {
+const STYLES: Record<DisplayStatus, string> = {
+  draft: "bg-[#eef3f0] text-[#6d7b75]",
   paid: "bg-paid/15 text-paid",
   pending: "bg-pending/15 text-pending",
-  overdue: "bg-danger/15 text-danger",
+  processing: "bg-[#e3a345]/15 text-[#b97f2e]",
+  expired: "bg-danger/15 text-danger",
   void: "bg-[#eef3f0] text-[#6d7b75]",
 };
 
-const LABELS: Record<Display, string> = {
-  paid: "Paid",
-  pending: "Pending",
-  overdue: "Overdue",
-  void: "Void",
-};
-
-function resolveDisplay(status: InvoiceStatus, dueDate: string | null): Display {
-  if (status === "paid") return "paid";
-  if (status === "void") return "void";
-  if (isOverdue(dueDate, status)) return "overdue";
-  return "pending";
-}
-
-/** Compact pill used in tables and cards. */
-export function StatusBadge({ invoice }: { invoice: Pick<Invoice, "status" | "due_date"> }) {
-  const display = resolveDisplay(invoice.status, invoice.due_date);
+/** Compact pill used in tables, cards, and the public invoice page. */
+export function StatusBadge({
+  invoice,
+  isProcessing = false,
+}: {
+  invoice: Pick<Invoice, "status" | "due_date">;
+  isProcessing?: boolean;
+}) {
+  const display = getDisplayStatus(invoice, isProcessing);
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-medium ${STYLES[display]}`}
     >
-      {LABELS[display]}
+      {STATUS_LABELS[display]}
     </span>
   );
 }

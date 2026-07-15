@@ -16,11 +16,12 @@ Supabase.
 
 | Route | What's there |
 |---|---|
-| `/` | Public marketing/landing page |
-| `/home` | The app's main landing view (hero, feature grid) once "inside" the product |
-| `/dashboard` | Summary stats (total/paid/pending/overdue) + recent invoices table |
-| `/invoices/new` | Create-invoice form with a live invoice preview |
-| `/invoice/[id]` | Public payment page — anyone with the link can connect a wallet and pay, no account needed |
+| `/` | Public marketing/landing page. Includes a Product Status section (what's live vs. in development) and a trust/footer section. |
+| `/home` | Redirects to `/dashboard` — this used to be a second, duplicated landing page. |
+| `/dashboard` | Summary stats (total/paid/pending/overdue). Shows clearly-labeled demo data when no wallet is connected, real invoices once connected. |
+| `/invoices/new` | Create-invoice form: multiple line items, field validation, live preview, Save draft / Preview / Create actions. |
+| `/invoice/[id]` | Public payment page — sender/customer/line items/status, Pay with USDC, QR code + copy-wallet fallback, Arc Testnet disclaimer. |
+| `/privacy`, `/terms` | Honest prototype-stage disclosures (not full legal documents yet). |
 
 ### Important: USDC is Arc's native gas token
 

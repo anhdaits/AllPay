@@ -54,12 +54,16 @@ export function InvoicesTable({ invoices, limit }: { invoices: Invoice[]; limit?
                   <StatusBadge invoice={invoice} />
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <Link
-                    href={`/invoice/${invoice.id}`}
-                    className="text-xs font-black text-[#0b3b2a] underline decoration-[#15e47a] decoration-2 underline-offset-4 transition hover:text-[#15a862]"
-                  >
-                    View →
-                  </Link>
+                  {invoice.id.startsWith("demo-") ? (
+                    <span className="text-xs font-black text-[#a7b4ae]">Demo</span>
+                  ) : (
+                    <Link
+                      href={`/invoice/${invoice.id}`}
+                      className="text-xs font-black text-[#0b3b2a] underline decoration-[#15e47a] decoration-2 underline-offset-4 transition hover:text-[#15a862]"
+                    >
+                      View →
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

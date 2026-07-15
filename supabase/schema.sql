@@ -3,7 +3,7 @@
 
 create extension if not exists "pgcrypto";
 
-create type invoice_status as enum ('pending', 'paid', 'void');
+create type invoice_status as enum ('draft', 'pending', 'paid', 'void');
 
 create table if not exists public.invoices (
   id uuid primary key default gen_random_uuid(),
@@ -12,6 +12,8 @@ create table if not exists public.invoices (
 
   -- who created it / who should pay
   creator_wallet text not null,
+  creator_name text,
+  creator_email text,
   recipient_wallet text not null,          -- wallet that should RECEIVE the payment
   customer_name text not null,
   customer_email text,
@@ -21,6 +23,7 @@ create table if not exists public.invoices (
   amount_usdc numeric(20, 6) not null check (amount_usdc > 0),
   description text,
   due_date date,
+  line_items jsonb,                        -- [{ name, quantity, unit_amount }], subtotal = sum(qty * unit_amount)
 
   -- payment status
   status invoice_status not null default 'pending',

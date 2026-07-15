@@ -1,23 +1,118 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, ReceiptText } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ConnectButton } from "@/components/ConnectButton";
 import { SummaryCard } from "@/components/SummaryCard";
 import { InvoicesTable } from "@/components/InvoicesTable";
 import { useMyInvoices } from "@/lib/useMyInvoices";
 import { isOverdue } from "@/lib/format";
+import type { Invoice } from "@/types/invoice";
+
+const now = new Date().toISOString();
+const inDays = (n: number) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+
+/** Shown only when no wallet is connected, so the dashboard never looks
+ *  empty/broken to a first-time visitor — always clearly labeled as demo. */
+const DEMO_INVOICES: Invoice[] = [
+  {
+    id: "demo-1",
+    created_at: now,
+    updated_at: now,
+    creator_wallet: "0xDemo00000000000000000000000000000demo1",
+    creator_name: "AllPay Demo",
+    creator_email: "demo@allpay.example",
+    recipient_wallet: "0xDemo00000000000000000000000000000demo1",
+    customer_name: "Acme Corp",
+    customer_email: "billing@acme.example",
+    customer_wallet: null,
+    amount_usdc: 2450,
+    description: "Website redesign — milestone 2",
+    due_date: inDays(12),
+    line_items: null,
+    status: "paid",
+    payer_wallet: "0xDemo0000000000000000000000000000payer1",
+    tx_hash: "0xdemo0000000000000000000000000000000000000000000000000000tx01",
+    paid_at: now,
+  },
+  {
+    id: "demo-2",
+    created_at: now,
+    updated_at: now,
+    creator_wallet: "0xDemo00000000000000000000000000000demo1",
+    creator_name: "AllPay Demo",
+    creator_email: "demo@allpay.example",
+    recipient_wallet: "0xDemo00000000000000000000000000000demo1",
+    customer_name: "Northwind Traders",
+    customer_email: "ap@northwind.example",
+    customer_wallet: null,
+    amount_usdc: 980,
+    description: "Consulting — March",
+    due_date: inDays(20),
+    line_items: null,
+    status: "pending",
+    payer_wallet: null,
+    tx_hash: null,
+    paid_at: null,
+  },
+  {
+    id: "demo-3",
+    created_at: now,
+    updated_at: now,
+    creator_wallet: "0xDemo00000000000000000000000000000demo1",
+    creator_name: "AllPay Demo",
+    creator_email: "demo@allpay.example",
+    recipient_wallet: "0xDemo00000000000000000000000000000demo1",
+    customer_name: "Blue Harbor LLC",
+    customer_email: "finance@blueharbor.example",
+    customer_wallet: null,
+    amount_usdc: 150,
+    description: "Domain + hosting renewal",
+    due_date: inDays(-6),
+    line_items: null,
+    status: "pending",
+    payer_wallet: null,
+    tx_hash: null,
+    paid_at: null,
+  },
+  {
+    id: "demo-4",
+    created_at: now,
+    updated_at: now,
+    creator_wallet: "0xDemo00000000000000000000000000000demo1",
+    creator_name: "AllPay Demo",
+    creator_email: "demo@allpay.example",
+    recipient_wallet: "0xDemo00000000000000000000000000000demo1",
+    customer_name: "Fern & Co.",
+    customer_email: "hello@fernco.example",
+    customer_wallet: null,
+    amount_usdc: 600,
+    description: "Logo + brand kit",
+    due_date: inDays(30),
+    line_items: null,
+    status: "draft",
+    payer_wallet: null,
+    tx_hash: null,
+    paid_at: null,
+  },
+];
+
+function summarize(invoices: Invoice[]) {
+  const total = invoices.length;
+  const paid = invoices.filter((i) => i.status === "paid").length;
+  const overdue = invoices.filter((i) => isOverdue(i.due_date, i.status)).length;
+  const draft = invoices.filter((i) => i.status === "draft").length;
+  const pending = total - paid - overdue - draft - invoices.filter((i) => i.status === "void").length;
+  return { total, paid, pending, overdue };
+}
 
 export default function DashboardPage() {
   const { invoices, error, isConnected } = useMyInvoices();
 
-  const total = invoices?.length ?? 0;
-  const paid = invoices?.filter((i) => i.status === "paid").length ?? 0;
-  const overdue = invoices?.filter((i) => isOverdue(i.due_date, i.status)).length ?? 0;
-  const pending = invoices
-    ? invoices.length - paid - overdue - invoices.filter((i) => i.status === "void").length
-    : 0;
+  const showDemo = !isConnected;
+  const rows = showDemo ? DEMO_INVOICES : invoices ?? [];
+  const stats = summarize(rows);
 
   return (
     <main className="min-h-screen bg-[#f7fbf8] text-[#0b3b2a]" style={{ colorScheme: "light" }}>
@@ -57,43 +152,45 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {!isConnected ? (
-          <div className="rounded-[30px] border border-dashed border-[#cddbd4] bg-white/80 px-6 py-14 text-center shadow-[0_20px_70px_rgba(10,47,31,0.05)]">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brass/15 text-brass">
-              <ReceiptText size={22} strokeWidth={2.25} />
-            </div>
-            <p className="mt-4 font-display text-xl font-bold text-[#0b3b2a]">Connect your wallet</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm font-medium leading-relaxed text-[#6d7b75]">
-              Connect to see the invoices you've created and their live payment status.
-            </p>
-          </div>
-        ) : error ? (
+        {error ? (
           <p className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm font-semibold text-danger">
             Couldn't load invoices: {error}
           </p>
         ) : (
           <>
+            {showDemo && (
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e3d6b3] bg-[#fbf6e7] px-4 py-3 text-sm font-semibold text-[#8a6d1f]">
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles size={16} />
+                  You're viewing demo data — connect your wallet to see your real invoices.
+                </span>
+              </div>
+            )}
+
             <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <SummaryCard label="Total invoices" value={total} tone="neutral" />
-              <SummaryCard label="Paid" value={paid} tone="paid" />
-              <SummaryCard label="Pending" value={pending} tone="pending" />
-              <SummaryCard label="Overdue" value={overdue} tone="danger" />
+              <SummaryCard label="Total invoices" value={stats.total} tone="neutral" />
+              <SummaryCard label="Paid" value={stats.paid} tone="paid" />
+              <SummaryCard label="Pending" value={stats.pending} tone="pending" />
+              <SummaryCard label="Overdue" value={stats.overdue} tone="danger" />
             </div>
 
             <div className="mb-3 flex items-center justify-between gap-4">
-              <h2 className="font-display text-xl font-bold tracking-[-0.03em] text-[#0b3b2a]">Recent invoices</h2>
+              <h2 className="font-display text-xl font-bold tracking-[-0.03em] text-[#0b3b2a]">
+                {showDemo ? "Demo invoices" : "Recent invoices"}
+              </h2>
               <Link href="/invoices/new" className="text-sm font-bold text-[#0b3b2a] underline decoration-[#15e47a] decoration-2 underline-offset-4">
                 Create invoice
               </Link>
             </div>
-            {invoices === null ? (
+
+            {!showDemo && invoices === null ? (
               <div className="space-y-2">
                 {[0, 1, 2].map((i) => (
                   <div key={i} className="h-16 animate-pulse rounded-2xl bg-white shadow-sm" />
                 ))}
               </div>
             ) : (
-              <InvoicesTable invoices={invoices} limit={10} />
+              <InvoicesTable invoices={rows} limit={10} />
             )}
           </>
         )}
